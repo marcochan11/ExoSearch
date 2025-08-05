@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS 
 from exa_py import Exa
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 import os
 
@@ -9,7 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app) 
 
-exa = Exa('EXA_API_KEY')
+exa = Exa(api_key=os.getenv('EXA_API_KEY'))
 
 def home():
     return "Hello Flask"
@@ -21,12 +22,27 @@ def search():
 
     response = exa.search(
         query,
-        num_results=5,
+        num_results=7,
         type='keyword',
-        include_domains=['https://www.tiktok.com'],
+        include_domains=[
+            'https://www.tiktok.com',
+            'https://www.google.com',
+            'https://www.youtube.com',
+            'https://en.wikipedia.org',
+            'https://www.reddit.com',
+            'https://www.instagram.com',
+        ]
     )
 
-    results = [{'title': r.title, 'url': r.url} for r in response.results]
+    results = []
+    for r in response.results:
+        parsed_url = urlparse(r.url)
+        domain = parsed_url.netloc.replace('www.', '')  # Clean domain without www.
+        results.append({
+            'title': r.title,
+            'url': r.url,
+            'domain': domain
+        })
 
     return jsonify(results)
 
