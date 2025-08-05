@@ -21,10 +21,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-
-# Ignore environment and virtual env files
-exa-backend/.env
-exa-backend/venv/
-exa-frontend/node_modules/
-.env

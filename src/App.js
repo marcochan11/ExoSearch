@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import axios from 'axios';
 
 function App() {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+
+  const handleSearch = async () => {
+    const res = await axios.post('http://localhost:5000/search', { query });
+    setResults(res.data);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: 20 }}>
+      <h1>Exa TikTok Search</h1>
+      <input
+        type="text"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search TikTok..."
+      />
+      <button onClick={handleSearch}>Search</button>
+
+      <ul>
+        {results.map((r, idx) => (
+          <li key={idx}>
+            <a href={r.url} target="_blank" rel="noreferrer">
+              {r.title}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
